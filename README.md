@@ -1,7 +1,17 @@
-This script uses SNMPv3 to check memory and swap usage, file system space
-usage and CPU load average on OpenBSD system.
-It also shows detailed information about all avaliable file systems, configured
-NICs, system information about OS and list of running processes.
+# OpenBSD SNMPv3 Check
+
+<img align="right" src="ppuf800X725.png" height="400">
+This script checks memory and swap usage, file system space usage
+and CPU load average on OpenBSD systems and can be used as a plugin
+with such monitoring systems like Nagios/Icinga/Centreon and others.
+
+It also shows detailed information about all avaliable file systems,
+configured NICs, system information about OS and list of running processes.
+
+It supports GNU/Linux and uses snmpwalk(1) as a backend.
+It can be run on OpenBSD. In this case it uses snmp(1).
+There is also EasySNMP version of this script.
+
 
 ```
 > ./openbsd_snmp3.py -h
