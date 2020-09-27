@@ -1,15 +1,14 @@
-# OpenBSD SNMPv3 Check
-
-<img align="right" src="ppuf800X725.png" height="400">
+<img align="right" src="ppuf800X725.png" height="250">
 This script checks memory and swap usage, file system space usage
 and CPU load average on OpenBSD systems and can be used as a plugin
 with such monitoring systems like Nagios/Icinga/Centreon and others.
+
 
 It also shows detailed information about all avaliable file systems,
 configured NICs, system information about OS and list of running processes.
 
 It supports GNU/Linux and uses snmpwalk(1) as a backend.
-It can be run on OpenBSD. In this case it uses snmp(1).
+It can be run on OpenBSD. In this case it uses [snmp(1)](http://man.openbsd.org/snmp).
 There is also EasySNMP version of this script.
 
 
@@ -93,6 +92,9 @@ lo0      up     127.0.0.1                            32768    softwareLoopback  
 pflog0   up     ---------------                      33136    other             false      0/0
 ```
 
+List of mounted file systems and its free space usage:
+
+
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
 -X eNckeySNMP -x AES -O file-systems
@@ -111,6 +113,9 @@ pflog0   up     ---------------                      33136    other             
 
 ```
 
+Check free space usage on /usr/X11R6 file system (using warning and critical
+thresholds by 80% and 90%)
+
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
 -X eNckeySNMP -x AES -O fs:/usr/X11R6 -w 80 -c 90
@@ -119,6 +124,9 @@ OK: FS usage: 27.42 % [ 186.2 Mb / 679.0 Mb ]|usage=27.42;80;90;0;0
 > echo $?
 0
 ```
+
+By setting waring thresholds to 20% output string chages to WARNING and rerurn
+code is now 1
 
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
