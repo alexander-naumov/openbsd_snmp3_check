@@ -1,14 +1,15 @@
 <img align="right" src="ppuf800X725.png" height="250">
-This script checks memory and swap usage, file system space usage
-and CPU load average on OpenBSD systems and can be used as a plugin
-with such monitoring systems like Nagios/Icinga/Centreon and others.
-
-
+This script checks memory and swap usage, file system space usage,
+traffic for specific network interface and CPU load average on OpenBSD
+systems and can be used as a plugin with such monitoring systems
+like Nagios/Icinga/Centreon and others.
+<br/>
 It also shows detailed information about all avaliable file systems,
 configured NICs, system information about OS and list of running processes.
-
+<br/>
 It supports GNU/Linux and uses snmpwalk(1) as a backend.
 It can be run on OpenBSD. In this case it uses [snmp(1)](http://man.openbsd.org/snmp).
+<br/>
 There is also EasySNMP version of this script.
 
 
@@ -125,7 +126,7 @@ OK: FS usage: 27.42 % [ 186.2 Mb / 679.0 Mb ]|usage=27.42;80;90;0;0
 0
 ```
 
-By setting waring thresholds to 20% output string chages to WARNING and rerurn
+By setting waring thresholds to 20% output string chages to WARNING and return
 code is now 1
 
 ```
@@ -137,26 +138,43 @@ WARNING: FS usage: 27.42 % [ 186.2 Mb / 679.0 Mb ]|usage=27.42;20;90;0;0
 1
 ```
 
+Check SWAP usage:
+
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
 -X eNckeySNMP -x AES -O swap -w 80 -c 90
 OK: Swap space usage: 0.00 % [ 0.0 b / 1.1 Gb ]|usage=0.00;80;90;0;0
 ```
 
+Check RAM usage:
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
 -X eNckeySNMP -x AES -O mem -w 80 -c 90
 OK: Real memory usage: 36.09 % [ 363.8 Mb / 1007.9 Mb ]|usage=36.09;80;90;0;0
 ```
 
+Check number of running processes:
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
 -X eNckeySNMP -x AES -O proc -w 80 -c 90
 OK: running 42 processes [max 1310]|processes=42;80;90;0;0
 ```
 
+Check CPU load average:
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
 -X eNckeySNMP -x AES -O cpu -w 40 -c 60
 OK: CPU load average 1 |'1 min'=1;40;60;0;0
+```
+
+Show system information about mashine. System has uptime 6 hours 52 mins.
+
+```
+> ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv -H 192.168.3.109 -O os
+
+System:  OpenBSD softiron 6.7 GENERIC.MP#602 arm64
+Uptime:  6:52:29.16
+CPU:     ARM Cortex-A57 r1p2
+Contact: root@softiron
+
 ```
