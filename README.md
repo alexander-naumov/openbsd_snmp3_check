@@ -2,14 +2,14 @@
 This script checks memory and swap usage, file system space usage,
 traffic for specific network interface and CPU load average on OpenBSD
 systems and can be used as a plugin with such monitoring systems
-like Nagios/Icinga/Centreon and others.\
-\
+like Nagios/Icinga/Centreon and others.&nbsp;
+&nbsp;
 It also shows detailed information about all avaliable file systems,
-configured NICs, system information about OS and list of running processes.\
-\
+configured NICs, system information about OS and list of running processes.&nbsp;
+&nbsp;
 It supports GNU/Linux and uses snmpwalk(1) as a backend.
-It can be run on OpenBSD. In this case it uses [snmp(1)](http://man.openbsd.org/snmp).\
-\
+It can be run on OpenBSD. In this case it uses [snmp(1)](http://man.openbsd.org/snmp).&nbsp;
+&nbsp;
 There is also EasySNMP version of this script.
 
 
