@@ -8,10 +8,9 @@ like Nagios/Icinga/Centreon and others.
 It also shows detailed information about all avaliable file systems,
 configured NICs, system information about OS and list of running processes.
 
-It supports GNU/Linux and uses snmpwalk(1) as a backend.
-It can be run on OpenBSD. In this case it uses [snmp(1)](http://man.openbsd.org/snmp).
-
-There is also EasySNMP version of this script.
+It supports GNU/Linux and uses **snmpwalk(1)** as a backend.
+It can be run on OpenBSD. In this case it uses **[snmp(1)](http://man.openbsd.org/snmp)**.
+There is also version that uses EasySNMP Python3 library as a backend.
 
 
 ```
@@ -81,17 +80,20 @@ __J  _   _.     >-'  )._.   |-'   > ./openbsd_snmp3.py -H <IP_ADDRESS> -u <secNa
 
 
 ```
+Show short statistics about installed network interfaces.
 
 ```
-> ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
--X eNckeySNMP -x AES -O interfaces
+> ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv \
+-H 192.168.3.109 -O interfaces
 
-NAME     STATE  IP                MAC                MTU      TYPE              CONNECTOR  I/O ERROR
-=====================================================================================================
-re0      up     192.168.122.241   52:54:0:b0:ab:45   1500     ethernetCsmacd    true       0/0
-enc0     down   ---------------                      0        other             false      0/0
-lo0      up     127.0.0.1                            32768    softwareLoopback  false      0/0
-pflog0   up     ---------------                      33136    other             false      0/0
+NAME       UP/DOWN    IP                 MAC                  MTU        TYPE                 STATE      I/O ERROR
+===================================================================================================================
+msk0       up         192.168.5.2                             1500       ethernetCsmacd       active        0/0
+enc0       down       ---------------                         0          other                no carrier    0/0
+lo0        up         127.0.0.1                               32768      softwareLoopback     no carrier    0/0
+urtwn0     up         192.168.3.109      a8:be:ac:c3:11:b     1500       ethernetCsmacd       active        0/62
+pflog0     up         ---------------                         33136      other                no carrier    0/0
+
 ```
 
 List of mounted file systems and its free space usage:
@@ -171,7 +173,8 @@ OK: CPU load average 1 |'1 min'=1;40;60;0;0
 Show system information about mashine. System has uptime 6 hours 52 mins.
 
 ```
-> ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv -H 192.168.3.109 -O os
+> ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv \
+-H 192.168.3.109 -O os
 
 System:  OpenBSD softiron 6.7 GENERIC.MP#602 arm64
 Uptime:  6:52:29.16
