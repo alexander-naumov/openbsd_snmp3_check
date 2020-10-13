@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/github/license/alexander-naumov/openbsd_snmp3_check)](https://github.com/alexander-naumov/openbsd_snmp3_check/LICENSE)
+
 <img align="right" src="ppuf800X725.png" height="250">
 
 This script checks memory and swap usage, file system space usage,
