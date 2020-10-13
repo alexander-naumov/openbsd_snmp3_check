@@ -8,8 +8,8 @@ like Nagios/Icinga/Centreon and others.
 It also shows detailed information about all avaliable file systems,
 configured NICs, system information about OS and list of running processes.
 
-It supports GNU/Linux and uses **snmpwalk(1)** as a backend.
-It can be run on OpenBSD. In this case it uses **[snmp(1)](http://man.openbsd.org/snmp)**.
+It runs on GNU/Linux
+and OpenBSD systems and uses **snmpwalk(1)** as a backend.
 There is also version that uses EasySNMP Python3 library as a backend.
 
 
