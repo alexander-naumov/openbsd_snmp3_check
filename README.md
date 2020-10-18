@@ -123,7 +123,7 @@ Interface 'urtwn0' - Traffic In: 69350400000000.01bps, Traffic Out: 320292000000
 By configuring monitoring system to use traffic graphs for this check/service, graphic like
 this could be created:
 
-<img align="center" src="fraffic.png">
+<img align="center" src="traffic.png">
 
 
 List of mounted **file systems** and its free space usage:
