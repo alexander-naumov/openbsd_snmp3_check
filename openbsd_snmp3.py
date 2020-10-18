@@ -35,7 +35,7 @@ import sys, os, re, argparse
 import subprocess as sp
 from datetime import timedelta
 
-VERSION = "0.50 (Oct 2020)"
+VERSION = "0.51 (Oct 2020)"
 
 PF = {
         "pfDescr" : "pfIfDescr",
@@ -283,7 +283,7 @@ def storage(session, fsys):
 def traffic(session, NIC):
   LIST_name, LIST_In, LIST_Out, LIST_Speed = ([] for i in range(4))
 
-  print(NIC)
+  #print(NIC)
 
   LIST_name = [i for i in snmpwalk(session, BSD["iface_name"])]
   if len(LIST_name) == 0:
@@ -303,7 +303,7 @@ def traffic(session, NIC):
   NEW_In  = LIST_In[p]
   NEW_Out = LIST_Out[p]
   SPEED   = int(LIST_Speed[p])
-  print("SPEED = ", SPEED)
+  #print("SPEED = ", SPEED)
 
   FILENAME = "/tmp/traffic." + session["hostname"] + "." +NIC
   try:
