@@ -98,8 +98,35 @@ pflog0     up         ---------------                         33136      other  
 
 ```
 
-List of mounted file systems and its free space usage:
+Monitor **traffic** (bandwidth for full-duplex connections) on specific network interface:
 
+```
+> ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv -H 192.168.3.109 -O traffic:urtwn0
+Could not read cache file. Creating new cache... please try again in 5 mins
+
+```
+
+Because MIB-II variables are stored as counters, script must take two poll cycles and
+figure the difference between the two (hence, the delta used in the equation).
+New file will be created and will be used to store this data.
+In my case this is /tmp/traffic.192.168.3.109.urtwn0.
+
+Right now 5 mins cycles only is supported. So, by running this script each 5 mins we will
+get output like this:
+
+```
+> ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv -H 192.168.3.109 -O traffic:urtwn0
+Interface 'urtwn0' - Traffic In: 69350400000000.01bps, Traffic Out: 32029200000000.004bps | 'traffic_in'=69350400000000.01bps;;;0; 'traffic_out'=32029200000000.004bps;;;0;
+
+```
+
+By configuring monitoring system to use traffic graphs for this check/service, graphic like
+this could be created:
+
+<img align="center" src="fraffic.png">
+
+
+List of mounted **file systems** and its free space usage:
 
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
@@ -119,7 +146,7 @@ List of mounted file systems and its free space usage:
 
 ```
 
-Check free space usage on /usr/X11R6 file system (using warning and critical
+Check **free space usage** on /usr/X11R6 file system (using warning and critical
 thresholds by 80% and 90%)
 
 ```
@@ -143,7 +170,7 @@ WARNING: FS usage: 27.42 % [ 186.2 Mb / 679.0 Mb ]|usage=27.42;20;90;0;0
 1
 ```
 
-Check SWAP usage:
+Check **SWAP usage**:
 
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
@@ -151,28 +178,28 @@ Check SWAP usage:
 OK: Swap space usage: 0.00 % [ 0.0 b / 1.1 Gb ]|usage=0.00;80;90;0;0
 ```
 
-Check RAM usage:
+Check **RAM usage**:
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
 -X eNckeySNMP -x AES -O mem -w 80 -c 90
 OK: Real memory usage: 36.09 % [ 363.8 Mb / 1007.9 Mb ]|usage=36.09;80;90;0;0
 ```
 
-Check number of running processes:
+Check **number of running processes**:
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
 -X eNckeySNMP -x AES -O proc -w 80 -c 90
 OK: running 42 processes [max 1310]|processes=42;80;90;0;0
 ```
 
-Check CPU load average:
+Check **CPU load average**:
 ```
 > ./openbsd_snmp3.py -H 192.168.122.241 -u snmpv3 -l authPriv -A aUthkeySNMP -a SHA \
 -X eNckeySNMP -x AES -O cpu -w 40 -c 60
 OK: CPU load average 1 |'1 min'=1;40;60;0;0
 ```
 
-Show system information about mashine. System has uptime 6 hours 52 mins.
+Show **system information** about mashine. System has uptime 6 hours 52 mins.
 
 ```
 > ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv \
