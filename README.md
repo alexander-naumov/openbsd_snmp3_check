@@ -88,20 +88,21 @@ Show short statistics about installed network interfaces.
 > ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv \
 -H 192.168.3.109 -O interfaces
 
-NAME       UP/DOWN    IP                 MAC                  MTU        TYPE                 STATE      I/O ERROR
-===================================================================================================================
-msk0       up         192.168.5.2                             1500       ethernetCsmacd       active        0/0
-enc0       down       ---------------                         0          other                no carrier    0/0
-lo0        up         127.0.0.1                               32768      softwareLoopback     no carrier    0/0
-urtwn0     up         192.168.3.109      a8:be:ac:c3:11:b     1500       ethernetCsmacd       active        0/62
-pflog0     up         ---------------                         33136      other                no carrier    0/0
+NAME     UP/DOWN   IP               MAC               MTU      TYPE              STATE      I/O ERROR
+=====================================================================================================
+msk0     up        192.168.5.2                        1500     ethernetCsmacd    active        0/0
+enc0     down      ---------------                    0        other             no carrier    0/0
+lo0      up        127.0.0.1                          32768    softwareLoopback  no carrier    0/0
+urtwn0   up        192.168.3.109    a8:be:ac:c3:11:b  1500     ethernetCsmacd    active        0/62
+pflog0   up        ---------------                    33136    other             no carrier    0/0
 
 ```
 
 Monitor **traffic** (bandwidth for full-duplex connections) on specific network interface:
 
 ```
-> ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv -H 192.168.3.109 -O traffic:urtwn0
+> ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv \
+-H 192.168.3.109 -O traffic:urtwn0
 Could not read cache file. Creating new cache... please try again in 5 mins
 
 ```
@@ -115,12 +116,13 @@ Right now 5 mins cycles only is supported. So, by running this script each 5 min
 get output like this:
 
 ```
-> ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv -H 192.168.3.109 -O traffic:urtwn0
+> ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv \
+-H 192.168.3.109 -O traffic:urtwn0
 Interface 'urtwn0' - Traffic In: 69350400000000.01bps, Traffic Out: 32029200000000.004bps | 'traffic_in'=69350400000000.01bps;;;0; 'traffic_out'=32029200000000.004bps;;;0;
 
 ```
 
-By configuring monitoring system to use traffic graphs for this check/service, graphic like
+By configuring monitoring system to use traffic graphs for this check/service, graph like
 this could be created:
 
 <img align="center" src="traffic.png">
