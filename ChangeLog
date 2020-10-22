@@ -1,13 +1,14 @@
 Version 0.51 (22.10.2020):
-	* Used snmpalk(1) as a backend
+	* Used snmpwalk(1) as a backend
 	* Show general info about:
 		- Uptime
 		- CPU arch
 		- Hostname
 		- Contact
-		- Kernel
+		- Kernel version
 		- File Systems (free space usage)
 		- Network interfaces
+		- List of running processes
 	* Checks for:
 		- SWAP usage
 		- RAM usage
