@@ -1,0 +1,16 @@
+Version 0.51 (22.10.2020):
+	* Used snmpalk(1) as a backend
+	* Show general info about:
+		- Uptime
+		- CPU arch
+		- Hostname
+		- Contact
+		- Kernel
+		- File Systems (free space usage)
+		- Network interfaces
+	* Checks for:
+		- SWAP usage
+		- RAM usage
+		- Number of running processes
+		- CPU load average
+		- Traffic for specific NIC
