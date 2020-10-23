@@ -82,25 +82,41 @@ BSD = {
 
 
 def snmpwalk(s, OID):
+	print("timeout = ", s["timeout"])
+	print("retry   = ", s["retry"])
+
 	if (OID == "hrSystemUptime"):
-		a = sp.run(["snmpwalk", "-Ov",
+		output = sp.run(["snmpwalk", "-Ov",
+         "-t", s["timeout"],
+         "-r", s["retry"],
          "-u", s["sec_name"],
          "-A", s["auth_pass"],
          "-a", s["auth_proto"],
          "-X", s["priv_pass"],
          "-x", s["priv_proto"],
          "-l", s["sec_level"],
-         s["hostname"], OID], capture_output=True, text=True).stdout.split("\n")
-		return a[0].split(")")[1]
+         s["hostname"], OID], capture_output=True, text=True)
+		print(output.returncode)
+		if output.returncode:
+			print("Timeout")
+			sys.exit(1)
+		return output.stdout.split("\n")[0].split(")")[1]
 
 	output = sp.run(["snmpwalk", "-Oq", "-Ov", 
+         "-t", s["timeout"],
+         "-r", s["retry"],
          "-u", s["sec_name"],
          "-A", s["auth_pass"],
          "-a", s["auth_proto"],
          "-X", s["priv_pass"],
          "-x", s["priv_proto"],
          "-l", s["sec_level"],
-         s["hostname"], OID], capture_output=True, text=True).stdout.split("\n")
+         s["hostname"], OID], capture_output=True, text=True)
+	print(output.returncode)
+	if output.returncode:
+		print("Timeout")
+		sys.exit(1)
+	return output.stdout.split("\n")
 
 	if OID in ["sysDescr", "hrDeviceDescr", "hrSWRunParameters"]:
 		return output
@@ -200,7 +216,8 @@ def process(session, warning, critical):
 
 
 def os_info(session):
-  print ("\nSystem:  " + snmpwalk(session,"sysDescr")[0])
+  sysDescr = snmpwalk(session,"sysDescr")[0]
+  print ("\nSystem:  " + sysDescr)
   print ("Uptime: "    + snmpwalk(session,"hrSystemUptime"))
   print ("CPU:     "   + snmpwalk(session,"hrDeviceDescr")[0])
   print ("Contact: "   + snmpwalk(session,"sysContact")[0] + "\n")
@@ -477,14 +494,14 @@ __J  _   _.     >-'  )._.   |-'   > ./openbsd_snmp3.py -H <IP_ADDRESS> -u <secNa
   if ARG.option in ["interfaces", "proc"]:
       sprint_value = True
 
-  TOUT = int(ARG.timeout) if ARG.timeout else 1
-  PORT = int(ARG.port)    if ARG.port    else 161
-  RTRY = int(ARG.retry)   if ARG.retry   else 3
+  TOUT = ARG.timeout if ARG.timeout else str(1)
+  PORT = ARG.port    if ARG.port    else str(161)
+  RTRY = ARG.retry   if ARG.retry   else str(3)
 
   session = {
 		"hostname"   : ARG.host,
 		"timeout"    : TOUT,
-		"retries"    : RTRY,
+		"retry"      : RTRY,
 		"port"       : PORT,
 		"sec_level"  : ARG.secLevel,
 		"sec_name"   : ARG.secName,
