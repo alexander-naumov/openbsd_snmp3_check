@@ -82,9 +82,6 @@ BSD = {
 
 
 def snmpwalk(s, OID):
-	print("timeout = ", s["timeout"])
-	print("retry   = ", s["retry"])
-
 	if (OID == "hrSystemUptime"):
 		output = sp.run(["snmpwalk", "-Ov",
          "-t", s["timeout"],
@@ -112,7 +109,7 @@ def snmpwalk(s, OID):
          "-x", s["priv_proto"],
          "-l", s["sec_level"],
          s["hostname"], OID], capture_output=True, text=True)
-	print(output.returncode)
+
 	if output.returncode:
 		print("Timeout")
 		sys.exit(1)
