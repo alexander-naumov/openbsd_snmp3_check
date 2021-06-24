@@ -2,7 +2,7 @@
 #
 # Author: Alexander Naumov <alexander_naumov@opensuse.org>
 #
-# Copyright (c) 2018-2020 Alexander Naumov, Munich, Germany
+# Copyright (c) 2018-2021 Alexander Naumov, Munich, Germany
 #       All rights reserved
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ import sys, os, re, argparse
 import subprocess as sp
 from datetime import timedelta
 
-VERSION = "0.51 (Oct 2020)"
+VERSION = "0.52 (June 2021)"
 
 PF = {
         "pfDescr" : "pfIfDescr",
@@ -286,9 +286,14 @@ def storage(session, fsys):
   PERCENT_FREE  = (int(FREE) / float(SIZE)) * 100
   PERCENT_ALLOC = (int(USED) / float(SIZE)) * 100
 
-  if fsys in ["Swap space", "Real memory"]:
+  if fsys == "Swap":
     return PERCENT_ALLOC, "%s usage: %.2f %% [ %s / %s ]|usage=%.2f;" % \
             (fsys, PERCENT_ALLOC, sizeof(USED), sizeof(SIZE), PERCENT_ALLOC)
+
+  elif fsys == "Real":
+    return PERCENT_ALLOC, "%s usage: %.2f %% [ %s / %s ]|usage=%.2f;" % \
+            ("RAM", PERCENT_ALLOC, sizeof(USED), sizeof(SIZE), PERCENT_ALLOC)
+
   else:
     return PERCENT_ALLOC, "FS usage: %.2f %% [ %s / %s ]|usage=%.2f;" % \
             (PERCENT_ALLOC, sizeof(USED), sizeof(SIZE), PERCENT_ALLOC)
@@ -296,8 +301,6 @@ def storage(session, fsys):
 
 def traffic(session, NIC):
   LIST_name, LIST_In, LIST_Out, LIST_Speed = ([] for i in range(4))
-
-  #print(NIC)
 
   LIST_name = [i for i in snmpwalk(session, BSD["iface_name"])]
   if len(LIST_name) == 0:
@@ -317,7 +320,6 @@ def traffic(session, NIC):
   NEW_In  = LIST_In[p]
   NEW_Out = LIST_Out[p]
   SPEED   = int(LIST_Speed[p])
-  #print("SPEED = ", SPEED)
 
   FILENAME = "/tmp/traffic." + session["hostname"] + "." +NIC
   try:
