@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
+#!/opt/rh/rh-python38/root/usr/bin/python3.8
 #
 # Author: Alexander Naumov <alexander_naumov@opensuse.org>
 #
-# Copyright (c) 2018-2021 Alexander Naumov, Munich, Germany
+# Copyright (c) 2018-2022 Alexander Naumov, Munich, Germany
 #       All rights reserved
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +36,7 @@ import sys, os, re, argparse
 import subprocess as sp
 from datetime import timedelta
 
-VERSION = "0.52 (June 2021)"
+VERSION = "0.53 (Jan 2022)"
 
 PF = {
         "pfDescr" : "pfIfDescr",
@@ -82,8 +83,8 @@ BSD = {
 
 
 def snmpwalk(s, OID):
-	if (OID == "hrSystemUptime"):
-		output = sp.run(["snmpwalk", "-Ov",
+    if (OID == "hrSystemUptime"):
+        output = sp.run(["snmpwalk", "-Ov",
          "-t", s["timeout"],
          "-r", s["retry"],
          "-u", s["sec_name"],
@@ -92,14 +93,14 @@ def snmpwalk(s, OID):
          "-X", s["priv_pass"],
          "-x", s["priv_proto"],
          "-l", s["sec_level"],
-         s["hostname"], OID], capture_output=True, text=True)
-		print(output.returncode)
-		if output.returncode:
-			print("Timeout")
-			sys.exit(1)
-		return output.stdout.split("\n")[0].split(")")[1]
+	    s["hostname"], OID], capture_output=True, text=True).stdout.split("\n")
+        if output[0].split(")")[1]:
+            return output[0].split(")")[1]
+        else:
+            print("Can't get such information...")
+            sys.exit(1)
 
-	output = sp.run(["snmpwalk", "-Oq", "-Ov", 
+    output = sp.run(["snmpwalk", "-Oq", "-Ov",
          "-t", s["timeout"],
          "-r", s["retry"],
          "-u", s["sec_name"],
@@ -108,17 +109,16 @@ def snmpwalk(s, OID):
          "-X", s["priv_pass"],
          "-x", s["priv_proto"],
          "-l", s["sec_level"],
-         s["hostname"], OID], capture_output=True, text=True)
+	 s["hostname"], OID], capture_output=True, text=True).stdout.split("\n")
 
-	if output.returncode:
-		print("Timeout")
-		sys.exit(1)
-	return output.stdout.split("\n")
+    if not output[0]:
+        print("Can't get such information...")
+        sys.exit(1)
 
-	if OID in ["sysDescr", "hrDeviceDescr", "hrSWRunParameters"]:
-		return output
+    if OID in ["sysDescr", "hrDeviceDescr", "hrSWRunParameters"]:
+        return output
 
-	return [i.split(" ")[0] for i in output]
+    return [i.split(" ")[0] for i in output]
 
 
 # FROM rfc2790:
@@ -177,6 +177,7 @@ def interfaces(session):
               Mac[x].ljust(20), Mtu[x].ljust(10), Type[x].ljust(20), state.ljust(13), OErr[x], IErr[x]))
   sys.exit(0)
 
+
 def proc(session):
   LIST_pid, LIST_state, LIST_type, LIST_name, LIST_param = ([] for i in range(5))
 
@@ -210,6 +211,11 @@ def process(session, warning, critical):
   else:
     print ("OK: " + output)
     sys.exit(0)
+
+
+def uname(session):
+  print(snmpwalk(session,"sysDescr")[0])
+  sys.exit(0)
 
 
 def os_info(session):
@@ -283,17 +289,18 @@ def storage(session, fsys):
   USED = int(LIST_alloc[p]) * int(LIST_used[p])
   FREE = SIZE - USED
 
+  if fsys == "Real": fsys = "RAM"
+
+  if SIZE <= 0:
+    print("WARNING: " + str(fsys) + " size is " + str(SIZE) + " bytes...")
+    sys.exit(1)
+
   PERCENT_FREE  = (int(FREE) / float(SIZE)) * 100
   PERCENT_ALLOC = (int(USED) / float(SIZE)) * 100
 
-  if fsys == "Swap":
+  if fsys in ["Swap", "RAM"]:
     return PERCENT_ALLOC, "%s usage: %.2f %% [ %s / %s ]|usage=%.2f;" % \
             (fsys, PERCENT_ALLOC, sizeof(USED), sizeof(SIZE), PERCENT_ALLOC)
-
-  elif fsys == "Real":
-    return PERCENT_ALLOC, "%s usage: %.2f %% [ %s / %s ]|usage=%.2f;" % \
-            ("RAM", PERCENT_ALLOC, sizeof(USED), sizeof(SIZE), PERCENT_ALLOC)
-
   else:
     return PERCENT_ALLOC, "FS usage: %.2f %% [ %s / %s ]|usage=%.2f;" % \
             (PERCENT_ALLOC, sizeof(USED), sizeof(SIZE), PERCENT_ALLOC)
@@ -513,6 +520,7 @@ __J  _   _.     >-'  )._.   |-'   > ./openbsd_snmp3.py -H <IP_ADDRESS> -u <secNa
   if (ARG.warning is None or ARG.critical is None):
     if   (ARG.option == "file-systems"): storage_list(session)
     elif (ARG.option == "os"):           os_info     (session)
+    elif (ARG.option == "uname"):        uname       (session)
     elif (ARG.option == "proc"):         proc        (session)
     elif (ARG.option == "interfaces"):   interfaces  (session)
     elif (ARG.option[:7] == "traffic" and len(ARG.option)>7):
