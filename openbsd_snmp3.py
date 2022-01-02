@@ -36,7 +36,7 @@ import sys, os, re, argparse
 import subprocess as sp
 from datetime import timedelta
 
-VERSION = "0.53 (Jan 2022)"
+VERSION = "0.54 (Jan 2022)"
 
 PF = {
         "pfDescr" : "pfIfDescr",
@@ -81,10 +81,19 @@ BSD = {
         "RAID_status" :"raidStatus",
 }
 
+ifType = {
+        "1" : "Other",
+        "6" : "Ethernet",
+        "24": "Loopback",
+        }
 
 def snmpwalk(s, OID):
-    if (OID == "hrSystemUptime"):
-        output = sp.run(["snmpwalk", "-Ov",
+    if s["backend"] == "snmpwalk":
+        a = ["snmpwalk"]
+    else:
+        a = ["snmp", "walk"]
+
+    a.extend(["-Ov",
          "-t", s["timeout"],
          "-r", s["retry"],
          "-u", s["sec_name"],
@@ -93,23 +102,18 @@ def snmpwalk(s, OID):
          "-X", s["priv_pass"],
          "-x", s["priv_proto"],
          "-l", s["sec_level"],
-	    s["hostname"], OID], capture_output=True, text=True).stdout.split("\n")
+	    s["hostname"], OID])
+
+    if (OID == "hrSystemUptime"):
+        output = sp.run(a, capture_output=True, text=True).stdout.split("\n")
         if output[0].split(")")[1]:
             return output[0].split(")")[1]
         else:
             print("Can't get such information...")
             sys.exit(1)
 
-    output = sp.run(["snmpwalk", "-Oq", "-Ov",
-         "-t", s["timeout"],
-         "-r", s["retry"],
-         "-u", s["sec_name"],
-         "-A", s["auth_pass"],
-         "-a", s["auth_proto"],
-         "-X", s["priv_pass"],
-         "-x", s["priv_proto"],
-         "-l", s["sec_level"],
-	 s["hostname"], OID], capture_output=True, text=True).stdout.split("\n")
+    a.insert(2, "-Oq")
+    output = sp.run(a, capture_output=True, text=True).stdout.split("\n")
 
     if not output[0]:
         print("Can't get such information...")
@@ -117,6 +121,9 @@ def snmpwalk(s, OID):
 
     if OID in ["sysDescr", "hrDeviceDescr", "hrSWRunParameters"]:
         return output
+
+    if s["backend"] == "snmp" and OID == "ifPhysAddress":
+        return [i.replace(" ", ":") for i in output]
 
     return [i.split(" ")[0] for i in output]
 
@@ -165,6 +172,7 @@ def interfaces(session):
 
   print("\nNAME       UP/DOWN    IP                 MAC                  MTU        TYPE                 STATE      I/O ERROR")
   print("===================================================================================================================")
+
   for i in Index[:-1]:
     try:
       IP = str(Dicto[str(i)])
@@ -172,9 +180,14 @@ def interfaces(session):
       IP = "---------------"
     x = Index.index(i)
     state = "active" if Conn[x] == "true" else "no carrier"
+    up_down = "up" if State[x] in ["1", "up"] else "down"
+    iftype = ifType[Type[x]] if len(Type[x])<3 else Type[x] #FIXME: this len doesn't look cool
 
-    print("%s %s %s %s %s %s %s %s/%s" % (Name[x].ljust(10), State[x].ljust(10), IP.ljust(18), \
-              Mac[x].ljust(20), Mtu[x].ljust(10), Type[x].ljust(20), state.ljust(13), OErr[x], IErr[x]))
+    print("%s %s %s %s %s %s %s %s/%s" % (Name[x].ljust(10), up_down.ljust(10), IP.ljust(18), \
+              Mac[x].ljust(20), Mtu[x].ljust(10), iftype.ljust(20), state.ljust(13), OErr[x], IErr[x]))
+
+
+
   sys.exit(0)
 
 
@@ -401,12 +414,17 @@ __J  _   _.     >-'  )._.   |-'   > ./openbsd_snmp3.py -H <IP_ADDRESS> -u <secNa
   p.add_argument('-H',
           required=True,
           dest='host',
-          help='IP addess or hostname of the target host')
+          help='IP addess (IPv4 and IPv6 supported) or hostname of the target host')
 
   p.add_argument('-p',
           dest='port',
           help="UDP port used for the establishing SNMPv3 connection \
                   (default 161)")
+
+  p.add_argument('-b',
+          dest='backend',
+          help="SNMP client. snmpwalk(1) and snmp(1) (native OpenBSD client) are supported \
+                  (default 'snmpwalk')")
 
   p.add_argument('-t',
           dest='timeout',
@@ -503,12 +521,14 @@ __J  _   _.     >-'  )._.   |-'   > ./openbsd_snmp3.py -H <IP_ADDRESS> -u <secNa
   TOUT = ARG.timeout if ARG.timeout else str(1)
   PORT = ARG.port    if ARG.port    else str(161)
   RTRY = ARG.retry   if ARG.retry   else str(3)
+  SNMP = ARG.backend if ARG.backend else str("snmpwalk")
 
   session = {
 		"hostname"   : ARG.host,
 		"timeout"    : TOUT,
 		"retry"      : RTRY,
-		"port"       : PORT,
+        "port"       : PORT,
+        "backend"    : SNMP,
 		"sec_level"  : ARG.secLevel,
 		"sec_name"   : ARG.secName,
 		"priv_proto" : ARG.privProtocol,
