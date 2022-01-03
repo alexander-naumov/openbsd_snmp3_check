@@ -10,10 +10,11 @@ like Nagios/Icinga/Centreon and others.
 It also shows detailed information about all avaliable file systems,
 configured NICs, system information about OS and list of running processes.
 
-It runs on GNU/Linux
-and OpenBSD systems and uses **snmpwalk(1)** as a backend.
-There is also version that uses EasySNMP Python3 library as a backend.
+It runs on GNU/Linux and OpenBSD systems and can use **snmpwalk(1)** or
+native **snmp(1)** client as a backend. There is also version (unsupportet)
+that uses EasySNMP Python3 library as a backend.
 
+Tested on OpenBSD 7.0.
 
 ```
 > ./openbsd_snmp3.py -h
@@ -26,7 +27,8 @@ optional arguments:
   --version        show program's version number and exit
   -H HOST          IP addess (IPv4 and IPv6 supported) or hostname of the target host
   -p PORT          UDP port used for the establishing SNMPv3 connection (default 161)
-  -b BACKEND       SNMP client. snmpwalk(1) and snmp(1) (native OpenBSD client) are supported (default 'snmpwalk')
+  -b BACKEND       SNMP client. snmpwalk(1) and snmp(1) (native OpenBSD client) are
+                   supported (default 'snmpwalk')
   -t TIMEOUT       Timeout in seconds (default 1)
   -r RETRY         Number of connection retries (default 3)
   -l SECLEVEL      Set the securityLevel used for SNMPv3 messages
