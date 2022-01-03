@@ -24,9 +24,9 @@ usage: openbsd_snmp3.py [-h] [--version] -H HOST [-p PORT] [-t TIMEOUT]
 optional arguments:
   -h, --help       show this help message and exit
   --version        show program's version number and exit
-  -H HOST          IP addess or hostname of the target host
-  -p PORT          UDP port used for the establishing SNMPv3 connection
-                   (default 161)
+  -H HOST          IP addess (IPv4 and IPv6 supported) or hostname of the target host
+  -p PORT          UDP port used for the establishing SNMPv3 connection (default 161)
+  -b BACKEND       SNMP client. snmpwalk(1) and snmp(1) (native OpenBSD client) are supported (default 'snmpwalk')
   -t TIMEOUT       Timeout in seconds (default 1)
   -r RETRY         Number of connection retries (default 3)
   -l SECLEVEL      Set the securityLevel used for SNMPv3 messages
@@ -82,19 +82,21 @@ __J  _   _.     >-'  )._.   |-'   > ./openbsd_snmp3.py -H <IP_ADDRESS> -u <secNa
 
 
 ```
-Show short statistics about installed network interfaces.
+Show short statistics about installed network interfaces. In this case snmp(1) client used:
 
 ```
-> ./openbsd_snmp3.py -u snmpv3 -A aUthkeySNMP -a SHA -X eNckeySNMP -x AES -l authPriv \
--H 192.168.3.109 -O interfaces
+> ./openbsd_snmp3.py -b snmp -u snmp -u snmpv3 -A authauthkey -a SHA -X encenckey -x AES -l authPriv \
+-H 192.168.3.2 -O interfaces
 
-NAME     UP/DOWN   IP               MAC               MTU      TYPE              STATE      I/O ERROR
+NAME       STATE         IP                 MAC                  MTU        TYPE            I/O ERROR
 =====================================================================================================
-msk0     up        192.168.5.2                        1500     ethernetCsmacd    active        0/0
-enc0     down      ---------------                    0        other             no carrier    0/0
-lo0      up        127.0.0.1                          32768    softwareLoopback  no carrier    0/0
-urtwn0   up        192.168.3.109    a8:be:ac:c3:11:b  1500     ethernetCsmacd    active        0/62
-pflog0   up        ---------------                    33136    other             no carrier    0/0
+em0        active        192.168.3.2        00:0B:AB:B9:56:4F    1500       Ethernet           0/0
+em1        no carrier    ---------------    00:0B:AB:B9:56:50    1500       Ethernet           0/0
+em2        no carrier    ---------------    00:0B:AB:B9:56:51    1500       Ethernet           0/0
+em3        no carrier    ---------------    00:0B:AB:B9:56:52    1500       Ethernet           0/0
+enc0       no carrier    ---------------                         0          Other              0/0
+lo0        active        127.0.0.1                               32768      Loopback           0/0
+pflog0     active        ---------------                         33136      Other              0/0
 
 ```
 
