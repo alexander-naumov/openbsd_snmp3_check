@@ -18,7 +18,7 @@ Tested on OpenBSD 7.0.
 
 ```
 > ./openbsd_snmp3.py -h
-usage: openbsd_snmp3.py [-h] [--version] -H HOST [-p PORT] [-t TIMEOUT]
+usage: openbsd_snmp3.py [-h] [--version] -H HOST [-p PORT] [-b BACKEND] [-t TIMEOUT]
                         [-r RETRY] -l SECLEVEL -u SECNAME [-a AUTHPROTOCOL]
                         [-A AUTHPASSWORD] [-x PRIVPROTOCOL] [-X PRIVPASSWORD]
                         -O OPTION [-w WARNING] [-c CRITICAL]
@@ -69,25 +69,25 @@ optional arguments:
     | /       .-'. `.  /-. L___
     J \      <    \  | | O\|.-'                           EXAMPLES:
   _J \  .-    \/ O | | \  |F
- '-F  -<_.     \   .-'  `-' L__   Checks FS space usage (in %) on '/var' with 'authPriv' secLevel:
-__J  _   _.     >-'  )._.   |-'   > ./openbsd_snmp3.py -H <IP_ADDRESS> -u <secName> -A <authPassword>
-`-|.'   /_.           \_|   F       -a <authProtocol> -X <privPassword> -x <privProtocol> -l authPriv
-  /.-   .                _.<        -O fs:/var -w 80 -c 90
+ '-F  -<_.     \   .-'  `-' L__  Checks FS space usage (in %) on '/var' with 'authPriv' secLevel:
+__J  _   _.     >-'  )._.   |-'  > ./openbsd_snmp3.py -H <IP_ADDRESS> -u <secName> -A <authPassword>
+`-|.'   /_.           \_|   F     -a <authProtocol> -X <privPassword> -x <privProtocol> -l authPriv
+  /.-   .                _.<      -O fs:/var -w 80 -c 90
  /'    /.'             .'  `\
-  /L  /'   |/      _.-'-\       Checks RAM usage (in %) with 'authNoPriv' secLevel:
- /'J       ___.---'\|          > ./openbsd_snmp3.py -u <secName> -A <authPassword> -a <authProtocol>
-   |\  .--' V  | `. `            -l authNoPriv -H <IP_ADDRESS> -O mem -w 60 -c 90
+  /L  /'   |/      _.-'-\      Checks RAM usage (in %) with 'authNoPriv' secLevel:
+ /'J       ___.---'\|         > ./openbsd_snmp3.py -u <secName> -A <authPassword> -a <authProtocol>
+   |\  .--' V  | `. `           -l authNoPriv -H <IP_ADDRESS> -O mem -w 60 -c 90
    |/`. `-.     `._)
-      / .-.\                 Checks SWAP usage (in %) with 'noAuthNoPriv' secLevel:
-      \ (  `\                 > ./openbsd_snmp3.py -u <secName> -l noAuthNoPriv -H <IP_ADDRESS>
-       `.\                       -O swap -w 60 -c 90
+      / .-.\                Checks SWAP usage (in %) with 'noAuthNoPriv' secLevel:
+      \ (  `\                > ./openbsd_snmp3.py -u <secName> -l noAuthNoPriv -H <IP_ADDRESS>
+       `.\                      -O swap -w 60 -c 90
 
 
 ```
 Show short statistics about installed network interfaces. In this case snmp(1) client used:
 
 ```
-> ./openbsd_snmp3.py -b snmp -u snmp -u snmpv3 -A authauthkey -a SHA -X encenckey -x AES -l authPriv \
+> ./openbsd_snmp3.py -b snmp -u snmpv3 -A authauthkey -a SHA -X encenckey -x AES -l authPriv \
 -H 192.168.3.2 -O interfaces
 
 NAME       STATE         IP                 MAC                  MTU        TYPE            I/O ERROR
