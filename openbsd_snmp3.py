@@ -90,8 +90,11 @@ ifType = {
 def snmpwalk(s, OID):
     if s["backend"] == "snmpwalk":
         a = ["snmpwalk"]
-    else:
+    elif s["backend"] == "snmp":
         a = ["snmp", "walk"]
+    else:
+        print("Can't find " + s["backend"])
+        sys.exit(1)
 
     a.extend(["-Ov",
          "-t", s["timeout"],
@@ -170,8 +173,8 @@ def interfaces(session):
 
   Dicto = dict(zip(Ip, Dic))
 
-  print("\nNAME       UP/DOWN    IP                 MAC                  MTU        TYPE                 STATE      I/O ERROR")
-  print("===================================================================================================================")
+  print("\nNAME       STATE         IP                 MAC                  MTU        TYPE            I/O ERROR")
+  print("=====================================================================================================")
 
   for i in Index[:-1]:
     try:
@@ -179,15 +182,11 @@ def interfaces(session):
     except:
       IP = "---------------"
     x = Index.index(i)
-    state = "active" if Conn[x] == "true" else "no carrier"
-    up_down = "up" if State[x] in ["1", "up"] else "down"
+    state = "active" if State[x] in ["1", "up"] else "no carrier"
     iftype = ifType[Type[x]] if len(Type[x])<3 else Type[x] #FIXME: this len doesn't look cool
 
-    print("%s %s %s %s %s %s %s %s/%s" % (Name[x].ljust(10), up_down.ljust(10), IP.ljust(18), \
-              Mac[x].ljust(20), Mtu[x].ljust(10), iftype.ljust(20), state.ljust(13), OErr[x], IErr[x]))
-
-
-
+    print("%s %s %s %s %s %s %s/%s" % (Name[x].ljust(10), state.ljust(13), IP.ljust(18), \
+              Mac[x].ljust(20), Mtu[x].ljust(10), iftype.ljust(18), OErr[x], IErr[x]))
   sys.exit(0)
 
 
