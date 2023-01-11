@@ -140,14 +140,14 @@ def cpu(session):
   try:
     load  = snmpwalk(session, BSD["cpu_load"])[0]
   except:
-    print("UNKNOWN: No SNMP answer from " + session.hostname)
+    print("UNKNOWN: No SNMP answer from " + session["hostname"])
     sys.exit(3)
 
   if load:
     output = "CPU load average %s |'1 min'=%s;" % (load, load)
     return int(load), output
   else:
-    print("UNKNOWN: No SNMP answer from " + session.hostname)
+    print("UNKNOWN: No SNMP answer from " + session["hostname"])
     sys.exit(3)
 
 
