@@ -24,6 +24,7 @@ usage: openbsd_snmp3.py [-h] [--version] -H HOST [-p PORT] [-b BACKEND] [-t TIME
                         -O OPTION [-w WARNING] [-c CRITICAL]
 optional arguments:
   -h, --help       show this help message and exit
+  -d, --debug      Enable debugging mode
   --version        show program's version number and exit
   -H HOST          IP addess (IPv4 and IPv6 supported) or hostname of the target host
   -p PORT          UDP port used for the establishing SNMPv3 connection (default 161)
@@ -64,7 +65,7 @@ optional arguments:
           .   |L  /|   .       This script uses SNMPv3 to check memory/swap usage, file system
       _ . |\ _| \--+._/| .      space usage and CPU load average on (remote) OpenBSD system.
      / ||\| Y J  )   / |/| ./    It also shows detailed information about all avaliable file
-    J  |)'( |        ` F`.'/     systems, and configured NICs, system information about OS
+    J  |)'( |        ` F`.'/     systems, configured NICs, system information about OS
   -<|  F         __     .-<       and list of running processes.
     | /       .-'. `.  /-. L___
     J \      <    \  | | O\|.-'                           EXAMPLES:
@@ -217,3 +218,14 @@ CPU:     ARM Cortex-A57 r1p2
 Contact: root@softiron
 
 ```
+
+In case of error it shows first stderr line returned by backend:
+
+```
+> ./openbsd_snmp3.py -u snmpv3 -A <pwd> -a SHA -X <pwd> -x AES -l authPriv -H 192.168.4.1 -O os
+Can't get such information...
+snmpwalk: Timeout (Sub-id not found: (top) -> sysDescr)
+```
+
+Option ```-d``` makes it more verbose. It enables debugging mode.
+In that case user can see the full error message (from backend)
