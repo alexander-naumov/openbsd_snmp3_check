@@ -3,7 +3,7 @@
 #
 # Author: Alexander Naumov <alexander_naumov@opensuse.org>
 #
-# Copyright (c) 2018-2022 Alexander Naumov, Munich, Germany
+# Copyright (c) 2018-2023 Alexander Naumov, Munich, Germany
 #       All rights reserved
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ import sys, os, re, argparse
 import subprocess as sp
 from datetime import timedelta
 
-VERSION = "0.54 (Jan 2022)"
+VERSION = "0.55 (Jan 2023)"
 
 PF = {
         "pfDescr" : "pfIfDescr",
@@ -108,18 +108,36 @@ def snmpwalk(s, OID):
 	    s["hostname"], OID])
 
     if (OID == "hrSystemUptime"):
-        output = sp.run(a, capture_output=True, text=True).stdout.split("\n")
+        output = sp.run(a, stdout=sp.PIPE, stderr=sp.PIPE, text=True)
+
+        err = output.stderr.split("\n")[0]
+        output = output.stdout.split("\n")
+
+        if s["debug"]:
+            print("output:", output)
+            print("errors:", err)
+
         if output[0].split(")")[1]:
             return output[0].split(")")[1]
+
         else:
             print("Can't get such information...")
+            print(err.split("\n")[0])
             sys.exit(1)
 
     a.insert(2, "-Oq")
-    output = sp.run(a, capture_output=True, text=True).stdout.split("\n")
+    output = sp.run(a, stdout=sp.PIPE, stderr=sp.PIPE, text=True)
+
+    err = output.stderr.split("\n")[0]
+    output = output.stdout.split("\n")
+
+    if s["debug"]:
+        print("output:", output)
+        print("errors:", err)
 
     if not output[0]:
         print("Can't get such information...")
+        print(err.split("\n")[0])
         sys.exit(1)
 
     if OID in ["sysDescr", "hrDeviceDescr", "hrSWRunParameters"]:
@@ -386,7 +404,7 @@ def main():
           .   |L  /|   .       This script uses SNMPv3 to check memory/swap usage, file system
       _ . |\ _| \--+._/| .      space usage and CPU load average on (remote) OpenBSD system.
      / ||\| Y J  )   / |/| ./    It also shows detailed information about all avaliable file
-    J  |)'( |        ` F`.'/     systems, and configured NICs, system information about OS
+    J  |)'( |        ` F`.'/     systems, configured NICs, system information about OS
   -<|  F         __     .-<       and list of running processes.
     | /       .-'. `.  /-. L___       
     J \      <    \  | | O\|.-'                           EXAMPLES:
@@ -405,6 +423,10 @@ __J  _   _.     >-'  )._.   |-'   > ./openbsd_snmp3.py -H <IP_ADDRESS> -u <secNa
        `.\                       -O swap -w 60 -c 90
                                   
 ''')
+
+  p.add_argument('-d', '--debug',
+          action='store_true',
+          help='Enable debugging mode')
 
   p.add_argument('--version',
           action='version',
@@ -485,6 +507,11 @@ __J  _   _.     >-'  )._.   |-'   > ./openbsd_snmp3.py -H <IP_ADDRESS> -u <secNa
 
   ARG = p.parse_args()
 
+  debug=False
+  if ARG.debug:
+    debug=True
+    print("Debugging mode")
+
   if ARG.secLevel == "authPriv":
     if ARG.authProtocol is None or \
        ARG.authPassword is None or \
@@ -523,6 +550,7 @@ __J  _   _.     >-'  )._.   |-'   > ./openbsd_snmp3.py -H <IP_ADDRESS> -u <secNa
   SNMP = ARG.backend if ARG.backend else str("snmpwalk")
 
   session = {
+		"debug"      : ARG.debug,
 		"hostname"   : ARG.host,
 		"timeout"    : TOUT,
 		"retry"      : RTRY,
