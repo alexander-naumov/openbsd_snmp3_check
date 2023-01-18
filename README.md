@@ -1,4 +1,5 @@
 [![License](https://img.shields.io/github/license/alexander-naumov/openbsd_snmp3_check)](https://github.com/alexander-naumov/openbsd_snmp3_check/LICENSE)
+[![Build Status](https://travis-ci.com/alexander-naumov/openbsd_snmp3_check.svg?branch=master)](https://app.travis-ci.com/github/alexander-naumov/openbsd_snmp3_check)
 
 <img align="right" src="ppuf800X725.png" height="250">
 
