@@ -1,7 +1,7 @@
 os:      linux
 dist:    kinetic
 before_install:
-  - sudo apt-get -y install
+  - sudo apt-get -y install snmp
 git:
   depth: false
 script:
