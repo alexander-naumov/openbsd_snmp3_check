@@ -1,5 +1,7 @@
 os:      linux
 dist:    kinetic
+before_install:
+  - sudo apt-get -y install
 git:
   depth: false
 script:
