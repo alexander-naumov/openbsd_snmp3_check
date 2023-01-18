@@ -14,7 +14,7 @@ It runs on GNU/Linux and OpenBSD systems and can use **snmpwalk(1)** or
 native **snmp(1)** client as a backend. There is also version (unsupportet)
 that uses EasySNMP Python3 library as a backend.
 
-Tested on OpenBSD 7.0.
+Tested on OpenBSD 7.2.
 
 ```
 > ./openbsd_snmp3.py -h
