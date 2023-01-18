@@ -1,0 +1,9 @@
+os:      linux
+dist:    focal
+git:
+  depth: false
+script:
+  - ./openbsd_snmp3.py -u alex -A password456 -a SHA -X 654drowssap -x AES -l authPriv -H 95.30.251.225 -O os
+  - ./openbsd_snmp3.py -u alex -A password456 -a SHA -X 654drowssap -x AES -l authPriv -H 95.30.251.225 -O file-systems
+  - ./openbsd_snmp3.py -u alex -A password456 -a SHA -X 654drowssap -x AES -l authPriv -H 95.30.251.225 -O interfaces
+  - ./openbsd_snmp3.py -u alex -A password456 -a SHA -X 654drowssap -x AES -l authPriv -H 95.30.251.225 -O proc
